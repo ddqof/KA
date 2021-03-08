@@ -6,7 +6,7 @@ from arg_parser import parse_args
 
 
 def get_horse_and_pawn_pos():
-    file_data = Path(parse_args().data_filename[0]) \
+    file_data = Path(parse_args().input_filename[0]) \
         .read_text().split('\n')
     return file_data[0], file_data[1]
 
