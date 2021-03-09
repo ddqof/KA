@@ -1,13 +1,11 @@
 #!/usr/bin/python3
 import collections
 import string
-from pathlib import Path
-from arg_parser import parse_args
 
 
 def get_horse_and_pawn_pos():
-    file_data = Path(parse_args().input_filename[0]) \
-        .read_text().split('\n')
+    with open("in.txt") as f:
+        file_data = f.read().split("\n")
     return file_data[0], file_data[1]
 
 
@@ -23,14 +21,14 @@ def init_graph():
 def build_all_possible_paths(letter, number):
     """Return possible paths in order recording to `task_1` doc"""
     return [
-        (ord(letter) + 1, number + 2),
         (ord(letter) - 1, number + 2),
+        (ord(letter) + 1, number + 2),
         (ord(letter) + 2, number + 1),
         (ord(letter) + 2, number - 1),
         (ord(letter) + 1, number - 2),
         (ord(letter) - 1, number - 2),
-        (ord(letter) - 2, number + 1),
-        (ord(letter) - 2, number - 1)
+        (ord(letter) - 2, number - 1),
+        (ord(letter) - 2, number + 1)
     ]
 
 
@@ -73,12 +71,11 @@ def bfs(graph, root, target):
 def main():
     horse_pos, pawn_pos = get_horse_and_pawn_pos()
     graph = build_graph()
-    res = bfs(graph, horse_pos, pawn_pos)
-    res.remove(None)
-    p = Path("output.txt")
-    if not p.exists():
-        p.touch()
-    p.write_text("\n".join(res))
+    reversed_res = bfs(graph, horse_pos, pawn_pos)
+    reversed_res.remove(None)
+    reversed_res.reverse()
+    with open("out.txt", "w+") as f:
+        f.write("\n".join(reversed_res))
 
 
 if __name__ == '__main__':
