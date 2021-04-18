@@ -1,0 +1,2 @@
+class GraphIsNotBipartiteException(Exception):
+    pass
