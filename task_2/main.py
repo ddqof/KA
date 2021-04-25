@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 from exceptions import GraphIsNotBipartiteException
 from color import Color
 from color import get_opposite_color
@@ -5,25 +7,24 @@ from color import get_opposite_color
 
 def dfs(start_node, graph):
     visited = set()
-    colors = {}
+    result_colors = {}
 
-    def internal_dfs(node, nodes_colors):
+    def internal_dfs(node):
         if node not in visited:
-            upd_colors = paint(node, nodes_colors, graph)
-            colors.update(upd_colors)
+            result_colors.update(paint(node, result_colors, graph))
             visited.add(node)
             for i in range(len(graph)):
                 if graph[node][i] == 1:
-                    internal_dfs(i, upd_colors)
+                    internal_dfs(i)
 
-    internal_dfs(start_node, colors)
+    internal_dfs(start_node)
 
-    return colors
+    return result_colors
 
 
-def paint(node, colors, graph):
-    upd_colors = colors
-    if len(colors) == 0:
+def paint(node, colors_dict, graph):
+    upd_colors = colors_dict
+    if len(upd_colors) == 0:
         upd_colors[node] = Color.RED
     else:
         adjacent_colors_set = set()
@@ -38,10 +39,11 @@ def paint(node, colors, graph):
 
 
 def parse(raw_text):
-    splatted_data = raw_text.split("\n")
-    matrix = [[] for _ in range(1, len(splatted_data) - 1)]
-    for i in range(1, len(splatted_data) - 1):
-        matrix[i - 1] = [int(x) for x in splatted_data[i].split()]
+    splatted_data = raw_text.splitlines()
+    splatted_data.pop(0)
+    matrix = [[] for _ in range(len(splatted_data))]
+    for i in range(len(splatted_data)):
+        matrix[i] = [int(x) for x in splatted_data[i].split()]
     return matrix
 
 
