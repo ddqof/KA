@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
-from exceptions import GraphIsNotBipartiteException
 from color import Color
 from color import get_opposite_color
+from exceptions import GraphIsNotBipartiteException
 
 
 def dfs(start_node, graph):
@@ -52,14 +52,15 @@ def get_nodes_by_color_list(colors_by_nodes, target_color):
 
 
 if __name__ == '__main__':
-    with open("input.txt") as f:
+    with open("input.txt") as input_file:
         try:
-            colors = dfs(0, parse(f.read()))
-            print("Y")
-            red_list = get_nodes_by_color_list(colors, Color.RED)
-            black_list = get_nodes_by_color_list(colors, Color.BLACK)
-            print(red_list)
-            print(0)
-            print(black_list)
+            colors = dfs(0, parse(input_file.read()))
+            # print("Y")
+            red_list = sorted(get_nodes_by_color_list(colors, Color.RED))
+            black_list = sorted(get_nodes_by_color_list(colors, Color.BLACK))
+            result = "Y\n" + " ".join(str(x) for x in red_list) + "\n" + "0\n" + " ".join(
+                str(x) for x in black_list) + "\n"
         except GraphIsNotBipartiteException:
-            print("N")
+            result = "N\n"
+        with open("output.txt", "w+") as output:
+            output.write(result)
