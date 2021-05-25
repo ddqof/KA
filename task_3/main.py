@@ -4,6 +4,12 @@ class PositiveCycleDetected(Exception):
         super(PositiveCycleDetected, self).__init__(msg)
 
 
+class VertexIsNotReachable(Exception):
+
+    def __init__(self, msg):
+        super(VertexIsNotReachable, self).__init__(msg)
+
+
 def build_graph(input_filename):
     with open(input_filename) as f:
         data = f.read().splitlines()
@@ -35,7 +41,8 @@ def ford_bellman(start, target, matrix):
     dist[start] = 0
     for i in range(len(matrix)):
         dist[i] = 1
-        previous[i] = start
+        if matrix[i][start] != -1:
+            previous[i] = start
     result = {}
     for k in range(vertices_count):
         if k == vertices_count - 1:
@@ -61,12 +68,14 @@ def update(u, v, dist, prev, matrix):
         prev[v] = u
 
 
-def build_path(start, target):
+def build_path(previous, start, target):
     path = [target]
-    v = prev.get(target)
+    v = previous.get(target)
+    if v is None:
+        raise VertexIsNotReachable(f"Vertex: {target} isn't reachable")
     path.append(v)
     while v != start:
-        v = prev.get(v)
+        v = previous.get(v)
         path.append(v)
     path.reverse()
     path = [str(x + 1) for x in path]
@@ -80,9 +89,9 @@ if __name__ == "__main__":
         distances, prev = ford_bellman(
             start, target, matrix
         )
-        str_path = build_path(start, target)
+        str_path = build_path(prev, start, target)
         result = f"Y\n{str_path}\n{distances[target]}"
-    except PositiveCycleDetected:
+    except (PositiveCycleDetected, VertexIsNotReachable):
         result = "N"
     with open("out.txt", "w") as f:
         f.write(result)
